@@ -1,5 +1,9 @@
 module Hablog(site) where
 
-site :: IO ()
-site = putStrLn "TODO: run site"
+import Hablog.Data.Config (Config)
+import Happstack.Server   (Response, ServerPartT, ok, toResponse)
+
+
+site :: Config -> ServerPartT IO Response
+site cfg = ok $ toResponse $ "Running with config:\n" ++ show cfg
 
