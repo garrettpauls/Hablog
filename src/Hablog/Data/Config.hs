@@ -21,7 +21,7 @@ data Config =
             }
 
 nullConfig :: Config
-nullConfig = Config "http://localhost" 8000 "/"
+nullConfig = Config "http://localhost" 8000 ""
 
 instance ToJSON Config where
   toJSON cfg = object
