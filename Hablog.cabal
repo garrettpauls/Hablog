@@ -16,8 +16,15 @@ executable hablog
                      , blaze-html
                      , boomerang
                      , bytestring
+                     , conduit
                      , happstack-server
+                     , monad-control
+                     , monad-logger
+                     , persistent
+                     , persistent-sqlite
+                     , persistent-template
                      , text
+                     , transformers
                      , web-routes
                      , web-routes-boomerang
                      , web-routes-th
