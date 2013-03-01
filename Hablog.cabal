@@ -24,6 +24,7 @@ executable hablog
                      , persistent-sqlite
                      , persistent-template
                      , text
+                     , time
                      , transformers
                      , web-routes
                      , web-routes-boomerang
