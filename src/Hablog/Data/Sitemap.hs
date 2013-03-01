@@ -1,23 +1,22 @@
 {-# LANGUAGE DeriveDataTypeable, GeneralizedNewtypeDeriving, OverloadedStrings, TemplateHaskell, TypeOperators #-}
 module Hablog.Data.Sitemap
 ( Sitemap(..)
-, EntryId(..)
 , sitemap
 ) where
 
 import Prelude    hiding ((.))
 import Control.Category  (Category((.)))
 import Data.Data         (Data, Typeable)
+import Data.Text
+import Hablog.Data.Slug
 import Text.Boomerang.TH (derivePrinterParsers)
-import Web.Routes        (PathInfo(..))
 import Web.Routes.Boomerang
-
-newtype EntryId = EntryId { unEntryId :: Int }
-                  deriving (Eq, Ord, Enum, Read, Show, Data, Typeable, PathInfo)
 
 data Sitemap =
      Home
-   | Entry EntryId
+   | Entry Slug
+   | AdminHome
+   | AdminUserHome
    deriving (Eq, Ord, Read, Show, Data, Typeable)
 
 $(derivePrinterParsers ''Sitemap)
@@ -25,9 +24,13 @@ $(derivePrinterParsers ''Sitemap)
 sitemap :: Router () (Sitemap :- ())
 sitemap =
   (  rHome
-  <> rEntry . (lit "entry" </> entryId)
+  <> rEntry . (lit "entry" </> slug)
+  <> lit "admin" . admin
   )
+  where
+    admin =  rAdminHome
+          <> rAdminUserHome </> lit "user"
 
-entryId :: Router () (EntryId :- ())
-entryId = xmaph EntryId (Just . unEntryId) int
+slug :: Router () (Slug :- ())
+slug = xmaph (slugify . unpack) (Just . pack . show) anyText
 
