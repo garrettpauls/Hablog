@@ -1,5 +1,5 @@
 {-# LANGUAGE QuasiQuotes, TemplateHaskell, TypeFamilies, OverloadedStrings, GADTs, FlexibleContexts #-}
-module Hablog.Data.Entry where
+module Hablog.Data where
 
 import Data.ByteString
 import Data.Text

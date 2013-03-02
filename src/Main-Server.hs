@@ -1,16 +1,19 @@
 module Main(main) where
 
+import CommandLine
 import Hablog             (site)
 import Hablog.Data.Config
-import Hablog.Data.Config.Database (runDatabase)
-import Hablog.Data.Entry  (migrateAll)
 import Happstack.Server   (Conf(port), nullConf, simpleHTTP)
-import Database.Persist.GenericSql (runMigration)
+import System.Environment (getArgs)
 
 main :: IO ()
 main = do
+  args <- getArgs
   cfg <- loadConfigOrDefault "config.yaml"
   putStrLn $ show cfg
-  runDatabase (cfgDatabase cfg) $ runMigration migrateAll
+  if length args == 0 then runServer cfg else runCommandLine cfg args
+
+runServer :: Config -> IO ()
+runServer cfg = do
   simpleHTTP nullConf { port = cfgPort cfg } $ site cfg
 
