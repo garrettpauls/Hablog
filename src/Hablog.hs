@@ -18,5 +18,5 @@ site cfg = msum
   , implSite (concat [cfgDomain cfg, ":", pack $ show $ cfgPort cfg]) (cfgAppRoot cfg) site'
   , seeOther (cfgAppRoot cfg) (toResponse ())
   ]
-  where site' = setDefault Home $ boomerangSite (runRouteT routes) sitemap
+  where site' = setDefault Home $ boomerangSite (runRouteT $ routes cfg) sitemap
 

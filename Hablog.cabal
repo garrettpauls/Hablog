@@ -18,12 +18,16 @@ executable hablog
                      , boomerang
                      , bytestring
                      , conduit
+                     , directory
                      , happstack-server
                      , monad-control
                      , monad-logger
                      , persistent
                      , persistent-sqlite
                      , persistent-template
+                     , reform
+                     , reform-blaze
+                     , reform-happstack
                      , text
                      , time
                      , transformers

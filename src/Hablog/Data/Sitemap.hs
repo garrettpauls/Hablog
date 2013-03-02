@@ -16,7 +16,8 @@ data Sitemap =
      Home
    | Entry Slug
    | AdminHome
-   | AdminUserHome
+   | AdminLogin
+   | AdminLogout
    deriving (Eq, Ord, Read, Show, Data, Typeable)
 
 $(derivePrinterParsers ''Sitemap)
@@ -29,7 +30,8 @@ sitemap =
   )
   where
     admin =  rAdminHome
-          <> rAdminUserHome </> lit "user"
+          <> rAdminLogin  </> lit "login"
+          <> rAdminLogout </> lit "logout"
 
 slug :: Router () (Slug :- ())
 slug = xmaph (slugify . unpack) (Just . pack . show) anyText
