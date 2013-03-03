@@ -1,12 +1,25 @@
 {-# LANGUAGE QuasiQuotes, TemplateHaskell, TypeFamilies, OverloadedStrings, GADTs, FlexibleContexts #-}
+-- {-# OPTIONS_GHC -ddump-splices #-}
 module Hablog.Data where
 
+import Control.Monad.Reader     (ReaderT, ask)
 import Data.ByteString
 import Data.Text
 import Data.Time.Clock
 import Database.Persist
 import Database.Persist.TH
-import Hablog.Data.Slug (Slug)
+import Hablog.Data.Config       (Config)
+import Hablog.Data.RequestState (RequestState(..))
+import Hablog.Data.Sitemap      (Sitemap)
+import Hablog.Data.Slug         (Slug)
+import Happstack.Server         (ServerPartT)
+import Web.Routes               (RouteT)
+
+type Page = PageT IO
+type PageT m = ReaderT RequestState (RouteT Sitemap (ServerPartT m))
+
+getConfig :: Page Config
+getConfig = ask >>= return . requestConfig
 
 data MarkupEngine = Markdown deriving (Show, Read, Eq)
 derivePersistField "MarkupEngine"

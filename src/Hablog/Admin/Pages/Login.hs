@@ -7,10 +7,10 @@ module Hablog.Admin.Pages.Login
 import Prelude            hiding (head)
 import Control.Applicative
 import Control.Monad.Trans.Class (lift)
-import Hablog.Data.Config        (Config, decodeBodyCfg)
+import Hablog.Data.Config        (decodeBodyCfg)
 import Hablog.Data.Sitemap       (Sitemap(..))
-import Hablog.Pages              (Page)
-import Happstack.Server          (Input, Response, ServerPartT, ok, toResponse)
+import Hablog.Data               (Page, PageT, getConfig)
+import Happstack.Server          (Input, Response, ok, toResponse)
 import Text.Reform               ( CommonFormError(..), Form, FormError(..), (++>)
                                  , (<++), commonFormErrorStr, transformEither)
 import Text.Reform.Happstack
@@ -20,9 +20,7 @@ import Web.Routes                (showURL)
 import qualified Data.Text        as T
 import qualified Text.Blaze.Html5 as H
 
-type AppT m = ServerPartT m
-
-type LoginForm = Form (AppT IO) [Input] LoginError Html ()
+type LoginForm = Form (PageT IO) [Input] LoginError Html ()
 
 data LoginError = Required
                 | InvalidCredentials
@@ -53,18 +51,19 @@ loginForm = Credentials <$> user <*> pass <* inputSubmit (T.pack "Login")
     user = errorList ++> label "Username" ++> (inputText (T.pack "") `transformEither` required) <++ br
     pass = errorList ++> label "Password" ++> (inputPassword         `transformEither` required) <++ br
 
-appTemplate :: T.Text -> Html -> AppT IO Response
+appTemplate :: T.Text -> Html -> Page Response
 appTemplate head body = ok $ toResponse $ H.html $ do
   H.head $ H.title (toHtml head)
   H.body body
 
-login :: Config -> Page
-login cfg = do
+login :: Page Response
+login = do
+  cfg <- getConfig
   decodeBodyCfg cfg
-  loginUrl <- showURL AdminLogin >>= return . T.unpack
-  lift $ loginPage loginUrl
+  loginUrl <- lift $ showURL AdminLogin >>= return . T.unpack
+  loginPage loginUrl
   where
-    loginPage :: String -> AppT IO Response
+    loginPage :: String -> Page Response
     loginPage url = do
       result <- happstackEitherForm (form url) url loginForm
       case result of

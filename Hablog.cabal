@@ -22,6 +22,7 @@ executable hablog
                      , happstack-server
                      , monad-control
                      , monad-logger
+                     , mtl
                      , persistent
                      , persistent-sqlite
                      , persistent-template
