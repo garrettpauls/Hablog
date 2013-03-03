@@ -20,11 +20,11 @@ Category
   deriving Show
 
 User
-  userName    Text
+  name        Text
   password    ByteString
   email       Text
   displayName Text
-  UniqueUserName userName
+  UniqueUserName name
   deriving Show
 
 Entry
