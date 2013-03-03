@@ -7,9 +7,9 @@ module Hablog.Admin.Pages.Login
 import Prelude            hiding (head)
 import Control.Applicative
 import Control.Monad.Trans.Class (lift)
+import Hablog.Data               (Page, getConfig)
 import Hablog.Data.Config        (decodeBodyCfg)
 import Hablog.Data.Sitemap       (Sitemap(..))
-import Hablog.Data               (Page, PageT, getConfig)
 import Happstack.Server          (Input, Response, ok, toResponse)
 import Text.Reform               ( CommonFormError(..), Form, FormError(..), (++>)
                                  , (<++), commonFormErrorStr, transformEither)
@@ -20,7 +20,7 @@ import Web.Routes                (showURL)
 import qualified Data.Text        as T
 import qualified Text.Blaze.Html5 as H
 
-type LoginForm = Form (PageT IO) [Input] LoginError Html ()
+type LoginForm = Form Page [Input] LoginError Html ()
 
 data LoginError = Required
                 | InvalidCredentials

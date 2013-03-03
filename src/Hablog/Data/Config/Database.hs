@@ -5,14 +5,13 @@ module Hablog.Data.Config.Database
 , runDatabase
 ) where
 
-import Control.Applicative    ((<$>))
-import Control.Monad.IO.Class (MonadIO(..))
-import Control.Monad.Logger   (NoLoggingT)
+import Control.Applicative         ((<$>))
+import Control.Monad.IO.Class      (MonadIO(..))
+import Control.Monad.Logger        (NoLoggingT)
 import Control.Monad.Trans.Control (MonadBaseControl)
---import Control.Monad.Logger   (NoLoggingT)
-import Data.ByteString.Char8  (unpack)
-import Data.Conduit           (ResourceT)
-import Data.Text              (Text)
+import Data.ByteString.Char8       (unpack)
+import Data.Conduit                (ResourceT)
+import Data.Text                   (Text)
 import Data.Yaml
 import Database.Persist.GenericSql (SqlPersist)
 import Database.Persist.Sqlite     (runSqlite)

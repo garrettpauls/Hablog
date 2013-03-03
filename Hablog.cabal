@@ -13,6 +13,7 @@ executable hablog
   hs-source-dirs:      src
   ghc-options:         -Wall
   build-depends:       base ==4.5.*
+                     , base64-bytestring
                      , bcrypt
                      , blaze-html
                      , boomerang
@@ -29,6 +30,7 @@ executable hablog
                      , reform
                      , reform-blaze
                      , reform-happstack
+                     , resourcet
                      , text
                      , time
                      , transformers

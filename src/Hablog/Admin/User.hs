@@ -6,9 +6,9 @@ module Hablog.Admin.User
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Crypto.BCrypt
 import Data.Text
-import Data.Text.Encoding (encodeUtf8)
+import Data.Text.Encoding     (encodeUtf8)
 import Database.Persist
-import Hablog.Data
+import Hablog.Data.Persist
 
 -- | Creates a user
 createUser :: (PersistMonadBackend m ~ PersistEntityBackend User, PersistStore m)

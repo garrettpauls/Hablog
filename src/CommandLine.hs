@@ -1,10 +1,10 @@
 module CommandLine(runCommandLine) where
 
-import Control.Exception  (bracket_)
-import Data.Text          (pack)
+import Control.Exception           (bracket_)
+import Data.Text                   (pack)
 import Database.Persist.GenericSql (runMigration)
 import Hablog.Admin.User
-import Hablog.Data        (migrateAll)
+import Hablog.Data.Persist         (migrateAll)
 import Hablog.Data.Config
 import Hablog.Data.Config.Database (runDatabase)
 import System.IO
