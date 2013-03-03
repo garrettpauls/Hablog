@@ -34,5 +34,5 @@ sitemap =
           <> rAdminLogout </> lit "logout"
 
 slug :: Router () (Slug :- ())
-slug = xmaph (slugify . unpack) (Just . pack . show) anyText
+slug = xmaph (slugify . unpack) (Just . pack . unSlug) anyText
 
