@@ -7,10 +7,14 @@ module Hablog.Admin.Pages.Login
 import Prelude            hiding (head)
 import Control.Applicative
 import Control.Monad.Trans.Class (lift)
-import Hablog.Data               (Page, getConfig)
+import Database.Persist          (Entity(..))
+import Hablog.Admin.User
+import Hablog.Data               (Page)
 import Hablog.Data.Config        (decodeBodyCfg)
+import Hablog.Data.Session
 import Hablog.Data.Sitemap       (Sitemap(..))
-import Happstack.Server          (Input, Response, ok, toResponse)
+import Hablog.Data.RequestState
+import Happstack.Server          (Input, Response, ok, toResponse, tempRedirect)
 import Text.Reform               ( CommonFormError(..), Form, FormError(..), (++>)
                                  , (<++), commonFormErrorStr, transformEither)
 import Text.Reform.Happstack
@@ -57,16 +61,23 @@ appTemplate head body = ok $ toResponse $ H.html $ do
   H.body body
 
 login :: Page Response
-login = do
-  cfg <- getConfig
-  decodeBodyCfg cfg
-  loginUrl <- lift $ showURL AdminLogin >>= return . T.unpack
-  loginPage loginUrl
-  where
-    loginPage :: String -> Page Response
-    loginPage url = do
-      result <- happstackEitherForm (form url) url loginForm
-      case result of
-        (Left html)  -> appTemplate (T.pack "Login") html
-        (Right cred) -> appTemplate (T.pack "TODO" ) $ toHtml $ "TODO: Actually log in. " ++ show cred
+login = whenLoggedIn showMessage showForm where
+  showMessage = appTemplate (T.pack "Login") $ toHtml "You are already logged in"
+  showForm = do
+    cfg <- getConfig
+    decodeBodyCfg cfg
+    loginUrl <- lift $ showURL AdminLogin >>= return . T.unpack
+    loginPage loginUrl
+  loginPage :: String -> Page Response
+  loginPage url = do
+    result <- happstackEitherForm (form url) url loginForm
+    case result of
+      (Left html)  -> appTemplate (T.pack "Login") html
+      (Right cred) -> do
+        maybeUser <- authenticateUser (username cred) (password cred)
+        case maybeUser of
+          Nothing   -> appTemplate (T.pack "Error") $ toHtml $ "Invalid credentials."
+          Just user -> do
+            _ <- createSession (entityKey user)
+            tempRedirect url $ toResponse "You have logged in successfully."
 
