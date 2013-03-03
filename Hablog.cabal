@@ -20,6 +20,7 @@ executable hablog
                      , bytestring
                      , conduit
                      , directory
+                     , DRBG
                      , happstack-server
                      , monad-control
                      , monad-logger

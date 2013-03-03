@@ -6,6 +6,7 @@ module Hablog.Data.Session
 ) where
 
 import Control.Monad.IO.Class   (liftIO)
+import Crypto.Random.DRBG       (CryptoRandomGen(genBytes,newGenIO), HashDRBG, newGenIO)
 import Data.ByteString.Base64   (encode, decode)
 import Data.Char                (toLower)
 import Database.Persist
@@ -18,12 +19,21 @@ import qualified Data.ByteString.Char8       as BC
 import qualified Hablog.Data.Config.Database as DB
 import qualified Happstack.Server            as S
 
-createSession :: Key User -> PageT RequestState IO Session
+createSession :: Key User -> PageT RequestState IO (Entity Session)
 createSession userId = do
-  let session = Session (BC.pack "TODO: make session id") (userId)
-  _ <- runDatabase $ insert session
-  addCookie S.Session $ mkCookie "session" (BC.unpack $ encode $ sessionKey session)
+  gen <- liftIO $ (newGenIO :: IO HashDRBG)
+  session <- makeSession gen
+  addCookie S.Session $ mkCookie "session" (BC.unpack $ encode $ sessionKey (entityVal session))
   return session
+  where
+    makeSession :: (CryptoRandomGen g) => g -> PageT RequestState IO (Entity Session)
+    makeSession gen = do
+      let Right (key, newGen) = genBytes 512 gen
+      let session = Session key userId
+      maybeSession <- runDatabase $ insertUnique session
+      case maybeSession of
+        Just sesKey -> return $ Entity sesKey session
+        Nothing     -> makeSession newGen -- Try again for a unique session id
 
 maybeGetSession :: Config -> ServerPartT IO (Maybe (Entity Session))
 maybeGetSession cfg = do
