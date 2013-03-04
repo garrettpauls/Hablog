@@ -31,6 +31,6 @@ logout :: Page Response
 logout = do
   session <- getSession
   maybe (return ()) (destorySession) session
-  loginUrl <- lift $ showURL AdminLogin >>= return . T.unpack
+  loginUrl <- lift $ showURL Home >>= return . T.unpack
   tempRedirect loginUrl $ toResponse ("You have been logged out." :: String)
 

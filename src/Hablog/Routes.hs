@@ -3,6 +3,7 @@ module Hablog.Routes
 ) where
 
 import Control.Monad.Reader     (runReaderT)
+import Hablog.Admin.Pages.Login (loginRequired)
 import Hablog.Data              (Page)
 import Hablog.Data.RequestState (RequestState(..))
 import Hablog.Data.Sitemap
@@ -18,7 +19,9 @@ routes rq url = runReaderT routes' rq
     routes' = case url of
       (Home)       -> Pages.home
       (Entry slug) -> Pages.entry slug
-      (AdminHome)   -> Admin.home
-      (AdminLogin)  -> Admin.login
-      (AdminLogout) -> Admin.logout
+      _            -> loginRequired url $ case url of
+        (AdminHome)   -> Admin.home
+        (AdminLogin)  -> Admin.login
+        (AdminLogout) -> Admin.logout
+        _             -> Pages.home
 

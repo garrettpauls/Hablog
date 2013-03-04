@@ -2,6 +2,7 @@
   , ScopedTypeVariables, TypeFamilies, TypeSynonymInstances #-}
 module Hablog.Admin.Pages.Login
 ( login
+, loginRequired
 ) where
 
 import Prelude            hiding (head)
@@ -64,20 +65,26 @@ login :: Page Response
 login = whenLoggedIn showMessage showForm where
   showMessage = appTemplate (T.pack "Login") $ toHtml "You are already logged in"
   showForm = do
-    cfg <- getConfig
-    decodeBodyCfg cfg
+    getConfig >>= decodeBodyCfg
     loginUrl <- lift $ showURL AdminLogin >>= return . T.unpack
     loginPage loginUrl
-  loginPage :: String -> Page Response
-  loginPage url = do
-    result <- happstackEitherForm (form url) url loginForm
-    case result of
-      (Left html)  -> appTemplate (T.pack "Login") html
-      (Right cred) -> do
-        maybeUser <- authenticateUser (username cred) (password cred)
-        case maybeUser of
-          Nothing   -> appTemplate (T.pack "Error") $ toHtml $ "Invalid credentials."
-          Just user -> do
-            _ <- createSession (entityKey user)
-            tempRedirect url $ toResponse "You have logged in successfully."
+
+loginPage :: String -> Page Response
+loginPage url = do
+  result <- happstackEitherForm (form url) url loginForm
+  case result of
+    (Left html)  -> appTemplate (T.pack "Login") html
+    (Right cred) -> do
+      maybeUser <- authenticateUser (username cred) (password cred)
+      case maybeUser of
+        Nothing   -> appTemplate (T.pack "Error") $ toHtml $ "Invalid credentials."
+        Just user -> do
+          _ <- createSession (entityKey user)
+          tempRedirect url $ toResponse "You have logged in successfully."
+
+loginRequired :: Sitemap -> Page Response -> Page Response
+loginRequired current page = do
+  url <- lift $ showURL current
+  getConfig >>= decodeBodyCfg
+  whenLoggedIn page (loginPage $ T.unpack url)
 
