@@ -16,6 +16,9 @@ data Sitemap =
      Home
    | Entry Slug
    | AdminHome
+   | AdminEntryNew
+   | AdminEntryList
+   | AdminEntryEdit Slug
    | AdminLogin
    | AdminLogout
    deriving (Eq, Ord, Read, Show, Data, Typeable)
@@ -26,12 +29,17 @@ sitemap :: Router () (Sitemap :- ())
 sitemap =
   (  rHome
   <> rEntry . (lit "entry" </> slug)
-  <> lit "admin" . admin
+  <> lit "admin" </> admin
   )
   where
     admin =  rAdminHome
-          <> rAdminLogin  </> lit "login"
-          <> rAdminLogout </> lit "logout"
+          <> rAdminLogin  . lit "login"
+          <> rAdminLogout . lit "logout"
+          <> lit "entry" .
+             (  rAdminEntryNew  </> lit "new"
+             <> rAdminEntryList </> lit "list"
+             <> rAdminEntryEdit  . (lit "edit" </> slug)
+             )
 
 slug :: Router () (Slug :- ())
 slug = xmaph (slugify . unpack) (Just . pack . unSlug) anyText

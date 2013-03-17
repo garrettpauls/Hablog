@@ -7,10 +7,8 @@ import Data.Text
 import Data.Time.Clock
 import Database.Persist
 import Database.Persist.TH
+import Hablog.Data.Markup  (MarkupEngine)
 import Hablog.Data.Slug    (Slug)
-
-data MarkupEngine = Markdown deriving (Show, Read, Eq)
-derivePersistField "MarkupEngine"
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persist|
 Category
@@ -34,7 +32,7 @@ Entry
   categoryId   Category Maybe
   markup       Text
   markupEngine MarkupEngine
-  renderedHtml Text
+  html         Text
   published    Bool
   publishDate  UTCTime
   updateDate   UTCTime

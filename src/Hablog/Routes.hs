@@ -23,5 +23,8 @@ routes rq url = runReaderT routes' rq
         (AdminHome)   -> Admin.home
         (AdminLogin)  -> Admin.login
         (AdminLogout) -> Admin.logout
+        (AdminEntryNew)       -> Admin.home
+        (AdminEntryList)      -> Admin.home
+        (AdminEntryEdit slug) -> Admin.home
         _             -> Pages.home
 
