@@ -25,6 +25,7 @@ executable hablog
                      , monad-control
                      , monad-logger
                      , mtl
+                     , old-locale
                      , pandoc
                      , persistent
                      , persistent-sqlite

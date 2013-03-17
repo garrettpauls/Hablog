@@ -17,14 +17,14 @@ routes rq url = runReaderT routes' rq
   where
     routes' :: Page Response
     routes' = case url of
-      (Home)       -> Pages.home
-      (Entry slug) -> Pages.entry slug
-      _            -> loginRequired url $ case url of
-        (AdminHome)   -> Admin.home
-        (AdminLogin)  -> Admin.login
-        (AdminLogout) -> Admin.logout
-        (AdminEntryNew)       -> Admin.home
-        (AdminEntryList)      -> Admin.home
-        (AdminEntryEdit slug) -> Admin.home
-        _             -> Pages.home
+      (SiteHome)       -> Pages.home
+      (SiteEntry slug) -> Pages.entry slug
+      _                -> loginRequired url $ case url of
+        (AdminHome)    -> Admin.home
+        (AdminLogin)   -> Admin.login
+        (AdminLogout)  -> Admin.logout
+        (AdminEntryNew)    -> Admin.entryNew
+        (AdminEntryList)   -> Admin.entryList
+        (AdminEntryEdit _) -> Admin.home
+        _              -> Pages.home
 

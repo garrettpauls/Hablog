@@ -13,8 +13,8 @@ import Text.Boomerang.TH (derivePrinterParsers)
 import Web.Routes.Boomerang
 
 data Sitemap =
-     Home
-   | Entry Slug
+     SiteHome
+   | SiteEntry Slug
    | AdminHome
    | AdminEntryNew
    | AdminEntryList
@@ -27,8 +27,8 @@ $(derivePrinterParsers ''Sitemap)
 
 sitemap :: Router () (Sitemap :- ())
 sitemap =
-  (  rHome
-  <> rEntry . (lit "entry" </> slug)
+  (  rSiteHome
+  <> rSiteEntry . (lit "entry" </> slug)
   <> lit "admin" </> admin
   )
   where

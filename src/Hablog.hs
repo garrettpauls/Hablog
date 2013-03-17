@@ -30,5 +30,5 @@ site cfg = msum
     site' :: (Maybe (Entity Session)) -> Site Sitemap (ServerPartT IO Response)
     site' session = do
       let request = RequestState cfg session
-      setDefault Home $ boomerangSite (runRouteT $ routes request) sitemap
+      setDefault SiteHome $ boomerangSite (runRouteT $ routes request) sitemap
 

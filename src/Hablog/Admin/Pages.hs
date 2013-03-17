@@ -2,11 +2,14 @@ module Hablog.Admin.Pages
 ( home
 , login
 , logout
+, entryNew
+, entryList
 ) where
 
 import Prelude            hiding (head)
 import Control.Monad.Trans.Class (lift)
 import Hablog.Admin.Pages.Login  (login)
+import Hablog.Admin.Pages.Entry  (entryNew, entryList)
 import Hablog.Data               (Page)
 import Hablog.Data.Session
 import Hablog.Data.Sitemap       (Sitemap(..))
@@ -40,6 +43,6 @@ logout :: Page Response
 logout = do
   session <- getSession
   maybe (return ()) (destorySession) session
-  loginUrl <- lift $ showURL Home >>= return . T.unpack
+  loginUrl <- lift $ showURL SiteHome >>= return . T.unpack
   tempRedirect loginUrl $ toResponse "You have been logged out."
 

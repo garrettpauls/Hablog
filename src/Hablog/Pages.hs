@@ -17,7 +17,7 @@ import Web.Routes.Happstack ()
 
 home :: Page Response
 home = do
-  entryUrl <- lift $ showURL $ Entry (slugify "example entry")
+  entryUrl <- lift $ showURL $ SiteEntry (slugify "example entry")
   ok $ toResponse $ html $ do
     head $ title "Home"
     body $ do
@@ -26,7 +26,7 @@ home = do
 
 entry :: Slug -> Page Response
 entry eid = do
-  homeUrl <- lift $ showURL Home
+  homeUrl <- lift $ showURL SiteHome
   ok $ toResponse $ html $ do
     head $ title $ toHtml $ "Entry " ++ show eid
     body $ do
